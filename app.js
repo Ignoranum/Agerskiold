@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import server from './tcp-server.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,4 +29,11 @@ app.all('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
+});
+
+// for the tcp-server.js file
+const serverPort = 8080;
+
+server.listen(serverPort, () => {
+  console.log(`TCP server is listening on port ${serverPort}`);
 });
