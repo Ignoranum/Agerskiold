@@ -3,7 +3,6 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import server from './tcp-server.js';
 import db from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +16,21 @@ app.use(cors());
 app.use("/", express.static('./public'));
 app.use(express.json());
 
+// ping
+app.get("/ping", (req, res) => {
+    const startTime = Date.now();
+
+    // Simulate some work (you can replace this with your actual server logic)
+    setTimeout(() => {
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
+
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end(`Ping response time: ${responseTime}ms`);
+    }, 100); // Simulated work takes 100 milliseconds
+});
+
+// routes
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/public/index.html");
 });
@@ -64,11 +78,4 @@ app.all('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
-});
-
-// for the tcp-server.js file
-const serverPort = 8080;
-
-server.listen(serverPort, () => {
-  console.log(`TCP server is listening on port ${serverPort}`);
 });
