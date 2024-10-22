@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import db from './db.js';
+import httpServer from './httpServer.js';
+import tcpServer from './tcpServer.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,24 +13,13 @@ const __dirname = dirname(__filename);
 const PORT = 3000;
 let app = express();
 
+const HTTP_PORT = 8000;
+const TCP_PORT = 8080;
+
 app.use(morgan('dev'));
 app.use(cors());
 app.use("/", express.static('./public'));
 app.use(express.json());
-
-// ping
-app.get("/ping", (req, res) => {
-    const startTime = Date.now();
-
-    // Simulate some work (you can replace this with your actual server logic)
-    setTimeout(() => {
-      const endTime = Date.now();
-      const responseTime = endTime - startTime;
-
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end(`Ping response time: ${responseTime}ms`);
-    }, 100); // Simulated work takes 100 milliseconds
-});
 
 // routes
 app.get("/", (req, res) => {
@@ -78,4 +69,10 @@ app.all('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
+});
+httpServer.listen(HTTP_PORT, () => {
+    console.log(`Server is running on port ${HTTP_PORT}`);
+});
+tcpServer.listen(TCP_PORT, () => {
+    console.log(`Server is listening on port ${TCP_PORT}`);
 });
