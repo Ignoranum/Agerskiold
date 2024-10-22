@@ -11,6 +11,7 @@ export default net.createServer((socket) => {
     if (msg === 'ping') {
       const [pingMsg, clientTimestamp] = message.split(':');
       const serverTimestamp = Date.now();
+      console.log(pingMsg);
       console.log(`Round-trip time: ${serverTimestamp - parseInt(clientTimestamp)} ms`);
       socket.write(`pong:${clientTimestamp}`);
     }

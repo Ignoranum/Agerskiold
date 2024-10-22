@@ -4,7 +4,6 @@ import morgan from 'morgan';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import db from './db.js';
-import httpServer from './httpServer.js';
 import tcpServer from './tcpServer.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -13,13 +12,32 @@ const __dirname = dirname(__filename);
 const PORT = 3000;
 let app = express();
 
-const HTTP_PORT = 8000;
 const TCP_PORT = 8080;
 
 app.use(morgan('dev'));
 app.use(cors());
 app.use("/", express.static('./public'));
 app.use(express.json());
+
+// ping pong
+app.get("/ping", (req, res) => {
+    if (req.method === 'GET' && req.url === '/ping') {
+        const startTime = Date.now();
+
+        // Simulate some work (you can replace this with your actual server logic)
+        setTimeout(() => {
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        console.log(`Ping response time: ${responseTime}ms`);
+        res.end(`Ping response time: ${responseTime}ms`);
+        }, 234); // Simulated work takes 234 milliseconds
+    } else {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('Not Found');
+    }
+});
 
 // routes
 app.get("/", (req, res) => {
@@ -69,9 +87,6 @@ app.all('*', (req, res) => {
 
 app.listen(PORT, () => {
     console.log("Server is running on port " + PORT);
-});
-httpServer.listen(HTTP_PORT, () => {
-    console.log(`Server is running on port ${HTTP_PORT}`);
 });
 tcpServer.listen(TCP_PORT, () => {
     console.log(`Server is listening on port ${TCP_PORT}`);
