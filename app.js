@@ -5,6 +5,15 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import db from './db.js';
 import tcpServer from './tcpServer.js';
+import twilio from "twilio";
+import bodyParser from "body-parser";
+
+// Twilio responses til webhook for opkald og beskeder
+/* const VoiceResponse = require("twilio").twiml.VoiceResponse; */
+const MessagingResponse = twilio.twiml.MessagingResponse;
+
+app.use(bodyParser.urlencoded({ extended: false }));
+// ovenstående for at kunne parse body fra Twilio
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,6 +27,26 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use("/", express.static('./public'));
 app.use(express.json());
+
+// Twilio webhook for beskeder
+app.post("/sms", twilio.webhook({ validate: false }), (req, res) => {
+    const twiml = new MessagingResponse();
+  
+    console.log(req.body);
+    console.log("From: ", req.body.From);
+    console.log("Country: ", req.body.FromCountry);
+    console.log("Message: ", req.body.Body);
+  
+    if (req.body.Body.toLowerCase() === "hej") {
+      twiml.message("Hej og goddag");
+    } else if (req.body.Body.toLowerCase() === "farvel") {
+      twiml.message("Farvel og god dag");
+    } else {
+      twiml.message(`Det her er en SMS webhook. Vil du have en ven svar "hej" tilbage og "farvel" når I har snakket.`);
+    }
+  
+    res.type("text/xml").send(twiml.toString());
+});
 
 // ping pong
 app.get("/ping", (req, res) => {
