@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <%- include('../partials/head') %>
+</head>
+<body>
+    <header>
+        <%- include('../partials/header') %>
+    </header>
+    <main>
+        <section>
+            <h2>Artwork</h2>
+            <p>Here you can see the artwork of Agerskiold</p>
+            <br>
+
+            <% imgs.forEach(function(item) { %>
+                <h3><%= item.title %></h3>
+                <img src="<%= item.img %>" alt="Artwork">
+                <br>
+            <% }); %>
+        </section>
+    </main>
+    <footer>
+        <%- include('../partials/footer') %>
+    </footer>
+</body>
+</html>
